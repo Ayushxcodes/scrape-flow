@@ -193,7 +193,6 @@ async function executePhase(
   if (!runFn) {
     return false;
   }
-
   const executionEnvironment: ExecutionEnvironment<any> =
     createExecutionEnvironment(node, environment,logCollector);
 
