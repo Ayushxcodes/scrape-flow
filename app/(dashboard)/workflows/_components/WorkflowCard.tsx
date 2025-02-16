@@ -5,12 +5,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { WorkflowStatus } from '@/types/workflow';
 import { Workflow } from '@prisma/client';
-import { FileTextIcon, MoreVerticalIcon, PlayIcon, ShuffleIcon, TrashIcon } from 'lucide-react';
+import { CoinsIcon, CornerDownRightIcon, FileTextIcon, MoreVerticalIcon, MoveRightIcon, PlayIcon, ShuffleIcon, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 import { DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuLabel,DropdownMenuSeparator,DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import TooltipWrapper from '@/components/TooltipWrapper';
 import DeleteWorkflowDialog from './DeleteWorkflowDialog';
+import RunBtn from './RunBtn';
+import SchedulerDialog from './SchedulerDialog';
+import { Badge } from '@/components/ui/badge';
 
 
 const statusColors = {
@@ -51,9 +54,11 @@ function WorkflowCard({workflow}:{workflow: Workflow}) {
                   </span>
                 )}
               </h3>
+              <ScheduleSection isDraft={isDraft} creditsCost={workflow.creditsCost} workflowId={workflow.id} cron={workflow.cron}/>
             </div>
           </div>
           <div className="flex items-center space-x-2">
+            {!isDraft && <RunBtn workflowId={workflow.id}/>}
             <Link
               href={`/workflow/editor/${workflow.id}`}
               className={cn(buttonVariants({
@@ -104,6 +109,23 @@ function WorkflowActions({workflowName,workflowId}:{workflowId:string ,workflowN
         </DropdownMenu>
       </>
     );
+}
+
+function ScheduleSection({isDraft,creditsCost,workflowId,cron}:{isDraft:boolean,creditsCost:number,workflowId:string,cron:string | null}){
+  if(isDraft) return null;
+  return <div className='flex items-center gap-2'>
+    <CornerDownRightIcon className='h-4 w-4 text-muted-foreground' />
+    <SchedulerDialog workflowId={workflowId} cron={cron}/>
+    <MoveRightIcon className='h-4 w-4 text-muted-foreground' />
+    <TooltipWrapper content="Credit consumed for full run">
+      <div className='flex items-center gap-3'>
+        <Badge variant={"outline"} className='space-x-2 text-muted-foreground rounded-sm'>
+          <CoinsIcon className='h-4 w-4' />
+          <span className='text-sm'>{creditsCost}</span>
+        </Badge>
+      </div>
+    </TooltipWrapper>
+  </div>
 }
 
 export default WorkflowCard

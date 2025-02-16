@@ -1,7 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import CountUp from "react-countup";
 
 export default function ReactCountUpWrapper({ value }: { value: number }) {
-  return <div>ReactCountUpWrapper</div>;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) {
+    return "-";
+  }
+  return <CountUp duration={0.5} preserveValue end={value} decimals={0} />;
 }
+
+//8:30:02
